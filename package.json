@@ -1,0 +1,28 @@
+{
+  "name": "dev-tinder-backend",
+  "version": "1.0.0",
+  "description": "tinder for dev",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev" : "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahilpate7/dev-tinder-backend.git"
+  },
+  "keywords": [
+    "nodejs",
+    "backend"
+  ],
+  "author": "Sahil Pate",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sahilpate7/dev-tinder-backend/issues"
+  },
+  "homepage": "https://github.com/sahilpate7/dev-tinder-backend#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
