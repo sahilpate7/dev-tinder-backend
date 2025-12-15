@@ -48,6 +48,40 @@ app.get('/feed', async (req,res)=>{
     }
 })
 
+app.delete('/user/:id', async (req,res)=>{
+    const userId = req.params.id;
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        res.send("User deleted successfully "+ user);
+
+    }catch (err){
+        res.status(400).send("Error deleting user" + err);
+    }
+})
+
+app.patch('/user/:id', async (req,res)=>{
+    const userId = req.params?.id;
+    const data = req.body;
+
+    try{
+        const ALLOWED_FIELDS = ['firstName', 'lastName', 'age', 'gender', 'photoUrl', 'about', 'skills'];
+
+        const updatedFields = Object.keys(data).every(key => ALLOWED_FIELDS.includes(key));
+
+        if(!updatedFields){
+            return res.status(400).send("No fields to update");
+        }
+
+        const user = await User.findByIdAndUpdate(userId, data, {
+            returnDocument : 'after',
+            runValidators : true
+        });
+        res.send("User updated successfully "+ user);
+    }catch (err){
+        res.status(400).send("Error updating user" + err.message);
+    }
+})
+
 // connect database
 connectDB().then(()=>{
     console.log('Database connected');
