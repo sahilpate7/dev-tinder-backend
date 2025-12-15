@@ -44,12 +44,11 @@ app.post('/login', async  (req,res) => {
         if(!user){
             throw new Error("User not found");
         }
-        const passwordValid = bcrypt.compareSync(password, user.password);
+        const passwordValid = await user.validatePassword(password)
 
         if(passwordValid){
 
-            const token = jwt.sign({userId: user._id}, "DevTinder@123");
-            console.log(token);
+            const token = await user.getJwtToken();
 
             res.cookie("token", token, {
                 httpOnly: true,
