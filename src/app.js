@@ -1,20 +1,84 @@
+require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/database');
 const app = express();
+const bcrypt = require("bcrypt");
+const cookieParser = require('cookie-parser')
 const User = require('./models/user');
+const {validateSignupData} = require('./utils/validation');
+const jwt = require('jsonwebtoken');
+const {userAuth} = require('./middleware/auth');
 
 app.use(express.json()); // parse application/json to req.body
 app.use(express.urlencoded({extended:false})); // parse application/x-www-form-urlencoded
+app.use(cookieParser());
 
 app.post('/signup',async (req,res)=>{
-    const user = new User( req.body);
-
     try{
+        // validate user data
+        validateSignupData(req);
+
+        // Encrypt password
+        const {firstName, lastName, emailId, password} = req.body;
+        const passwordHash = await bcrypt.hash(password, 10);
+        const user = new User( {
+            firstName,
+            lastName,
+            emailId,
+            password: passwordHash
+        });
+
         await user.save();
         res.send("User created successfully");
     } catch(err){
-        res.status(400).send("Error creating user" + err);
+        res.status(400).send("Error: " + err.message);
     }
+})
+
+app.post('/login', async  (req,res) => {
+    try {
+
+        const {emailId, password} = req.body;
+
+        const user = await User.findOne({emailId: emailId});
+        if(!user){
+            throw new Error("User not found");
+        }
+        const passwordValid = bcrypt.compareSync(password, user.password);
+
+        if(passwordValid){
+
+            const token = jwt.sign({userId: user._id}, "DevTinder@123");
+            console.log(token);
+
+            res.cookie("token", token, {
+                httpOnly: true,
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+            });
+            res.send("Logged in successfully");
+
+        } else {
+            throw new Error("Invalid password");
+        }
+    }catch (err){
+        res.status(400).send("Error logging in" + err.message);
+    }
+
+})
+
+app.get('/profile',userAuth, async (req,res)=>{
+
+    try {
+       const user = req.user
+        res.send(user);
+    } catch (err) {
+        res.status(400).send("Error " + err.message);
+    }
+
+})
+
+app.post('/sendConnectionRequest',userAuth, async (req,res)=>{
+    res.send("Connection request sent successfully");
 })
 
 // get user by email
