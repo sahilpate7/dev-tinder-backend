@@ -20,7 +20,7 @@ const userSchema = new Schema({
             required: true,
             unique: true,
             trim: true,
-            validate(value){
+            validate(value) {
                 if (!validator.isEmail(value)) {
                     throw new Error('Email is invalid ' + value);
                 }
@@ -29,8 +29,8 @@ const userSchema = new Schema({
         password: {
             type: String,
             required: true,
-            validate(value){
-                if(!validator.isStrongPassword(value)){
+            validate(value) {
+                if (!validator.isStrongPassword(value)) {
                     throw new Error('Password is too weak');
                 }
             }
@@ -49,7 +49,7 @@ const userSchema = new Schema({
         },
         photoUrl: {
             type: String,
-            validate(value){
+            validate(value) {
                 if (!validator.isURL(value)) {
                     throw new Error('URL is invalid ' + value);
                 }
@@ -71,16 +71,16 @@ const userSchema = new Schema({
     }
 );
 
-userSchema.methods.getJwtToken = async function(){
+userSchema.methods.getJwtToken = async function () {
     const user = this;
     const JWT_SECRET = process.env.JWT_SECRET;
     return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '1d'});
 }
-userSchema.methods.validatePassword = async function(passwordInputByUser){
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
     const user = this;
     const passwordHash = user.password;
 
-   return await bcrypt.compareSync(passwordInputByUser, passwordHash);
+    return await bcrypt.compareSync(passwordInputByUser, passwordHash);
 
 }
 module.exports = mongoose.model('User', userSchema);
