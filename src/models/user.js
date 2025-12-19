@@ -71,6 +71,8 @@ const userSchema = new Schema({
     }
 );
 
+userSchema.index({firstName: 1, lastName: 1});
+
 userSchema.methods.getJwtToken = async function () {
     const user = this;
     const JWT_SECRET = process.env.JWT_SECRET;
