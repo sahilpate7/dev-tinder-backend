@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestsRouter = require('./routes/request');
+const userRouter = require('./routes/user');
 
 app.use(express.json()); // parse application/json to req.body
 app.use(express.urlencoded({extended:false})); // parse application/x-www-form-urlencoded
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestsRouter);
+app.use('/', userRouter)
 
 // connect database
 connectDB().then(()=>{
