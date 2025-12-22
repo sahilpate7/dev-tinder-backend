@@ -53,7 +53,8 @@ const userSchema = new Schema({
                 if (!validator.isURL(value)) {
                     throw new Error('URL is invalid ' + value);
                 }
-            }
+            },
+            default : "https://cdn-icons-png.flaticon.com/128/9131/9131529.png"
         },
         about: {
             type: String,
