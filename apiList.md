@@ -13,8 +13,11 @@ PATCH /profile/password   (verify existing password, check if the password is st
 Connections Request Router
 POST /request/send/interested/:userId
 POST /request/send/ignored/:userId
+(POST /request/send/:status/:userId)
+
 POST /request/review/accepted/:requestId
 POST /request/review/rejected/:requestId
+(/request/review/:status/:requestId)
 
 Feed Router
 GET /user/connections
