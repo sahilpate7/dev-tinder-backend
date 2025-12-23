@@ -57,7 +57,7 @@ authRouter.post('/login', async  (req,res) => {
             throw new Error("Invalid password");
         }
     }catch (err){
-        res.status(400).send("Error logging in" + err.message);
+        res.status(400).json({error: err.message});
     }
 
 })
