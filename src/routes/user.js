@@ -5,6 +5,8 @@ const User = require("../models/user");
 
 const userRouter = express.Router();
 
+const USER_DATA = ["firstName", "lastName", "photoUrl", "gender", "age", "about", "skills"];
+
 userRouter.get('/user/requests/received', userAuth, async (req,res)=>{
     try{
         const loggedInUser = req.user;
@@ -12,7 +14,7 @@ userRouter.get('/user/requests/received', userAuth, async (req,res)=>{
         const connectionRequest = await ConnectionRequest.find({
             toUserId: loggedInUser._id,
             status : "interested"
-        }).populate("fromUserId", ["firstName","lastName", "photoUrl"]);
+        }).populate("fromUserId", USER_DATA);
 
         res.json({
             message: "Requests fetched successfully",
@@ -33,8 +35,8 @@ userRouter.get('/user/connections', userAuth, async (req,res)=>{
                 { fromUserId : loggedInUser._id, status: "accepted"}
             ]
         })
-            .populate("fromUserId", ["firstName","lastName", "photoUrl" , "gender", "age"])
-            .populate("toUserId", ["firstName","lastName", "photoUrl" , "gender", "age"])
+            .populate("fromUserId", USER_DATA)
+            .populate("toUserId", USER_DATA)
 
 
         const data = connectionRequest.map((row)=> {
@@ -80,7 +82,7 @@ userRouter.get('/feed', userAuth, async (req,res)=>{
                 {_id : {$nin : Array.from(hideUsersFromFeed)}},
                 {_id : {$ne : loggedInUser._id}}
             ]
-        }).select("firstName lastName photoUrl skills age gender").skip(skip).limit(limit);
+        }).select("firstName lastName photoUrl skills age gender about").skip(skip).limit(limit);
 
         res.json({data : users, message: "Feed fetched successfully"});
     } catch (err){
